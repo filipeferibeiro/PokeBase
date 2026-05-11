@@ -16,7 +16,7 @@ struct PokemonCellView: View {
                 .frame(width: 60, height: 60)
                 .background(.tertiary)
                 .clipShape(Circle())
-            Text(pokemon.name)
+            Text(pokemon.name.capitalized)
         }
     }
 }

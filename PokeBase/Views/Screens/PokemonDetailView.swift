@@ -35,7 +35,7 @@ struct PokemonDetailView: View {
             .background(.tertiary)
             .clipShape(Circle())
             
-            Text(pokemon.name)
+            Text(pokemon.name.capitalized)
                 .font(.title.bold())
         }
     }

@@ -14,12 +14,15 @@ struct PokemonListView: View {
         NavigationStack {
             List {
                 ForEach(pokemons) { pokemon in
-                    NavigationLink(destination: PokemonDetailView(pokemon: pokemon)) {
+                    NavigationLink(value: pokemon) {
                         PokemonCellView(pokemon: pokemon)
                     }
                 }
             }
             .navigationTitle("Pokémons")
+            .navigationDestination(for: Pokemon.self) { selectedPokemon in
+                PokemonDetailView(pokemon: selectedPokemon)
+            }
         }
     }
 }
