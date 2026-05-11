@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Pokemon: Hashable {
+struct Pokemon: Hashable, Identifiable {
     let id: UUID
     let name: String
     let imageURL: URL

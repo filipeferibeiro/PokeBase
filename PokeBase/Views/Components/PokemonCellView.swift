@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PokemonCellView: View {
-    let pokemon = Pokemon.exampleData[0]
+    let pokemon: Pokemon
     
     var body: some View {
         HStack(spacing: 16) {
@@ -22,5 +22,7 @@ struct PokemonCellView: View {
 }
 
 #Preview {
-    PokemonCellView()
+    let pokemon = Pokemon.exampleData[0]
+    
+    PokemonCellView(pokemon: pokemon)
 }
