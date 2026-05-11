@@ -10,9 +10,27 @@
 		820C374E2FB27EC000378538 /* PokeBase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokeBase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		820C37722FB2842F00378538 /* Exceptions for "PokeBase" folder in "PokeBase" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Network/.gitkeep,
+				Utils/.gitkeep,
+				ViewModels/.gitkeep,
+				Views/.gitkeep,
+				Views/Components/.gitkeep,
+				Views/Screens/.gitkeep,
+			);
+			target = 820C374D2FB27EC000378538 /* PokeBase */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		820C37502FB27EC000378538 /* PokeBase */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				820C37722FB2842F00378538 /* Exceptions for "PokeBase" folder in "PokeBase" target */,
+			);
 			path = PokeBase;
 			sourceTree = "<group>";
 		};
