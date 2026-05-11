@@ -14,7 +14,9 @@ struct PokemonListView: View {
         NavigationStack {
             List {
                 ForEach(pokemons) { pokemon in
-                    PokemonCellView(pokemon: pokemon)
+                    NavigationLink(destination: PokemonDetailView(pokemon: pokemon)) {
+                        PokemonCellView(pokemon: pokemon)
+                    }
                 }
             }
             .navigationTitle("Pokémons")
