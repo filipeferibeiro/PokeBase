@@ -14,7 +14,6 @@
 		820C37722FB2842F00378538 /* Exceptions for "PokeBase" folder in "PokeBase" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Utils/.gitkeep,
 				Views/.gitkeep,
 			);
 			target = 820C374D2FB27EC000378538 /* PokeBase */;

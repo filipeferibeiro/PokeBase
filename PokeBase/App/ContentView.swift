@@ -9,7 +9,19 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        PokemonListView()
+        TabView {
+            Tab("Home", systemImage: "house") {
+                PokemonListView()
+            }
+            
+            Tab("Favorites", systemImage: "heart") {
+                Text("Favorites")
+            }
+            
+            Tab("Search", systemImage: "magnifyingglass", role: .search) {
+                PokemonSearchView()
+            }
+        }
     }
 }
 

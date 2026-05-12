@@ -8,27 +8,17 @@
 import SwiftUI
 
 struct PokemonListView: View {
-    @State private var viewModel = PokemonViewModel()
+    @Environment(PokemonStore.self) private var store
     
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.isLoading && viewModel.pokemons.isEmpty {
+                if store.isLoading {
                     ProgressView("Loading Pokémons")
                         .controlSize(.large)
-                } else if let error = viewModel.errorMessage {
-                    ContentUnavailableView {
-                        Label("Connection error", systemImage: "wifi.exclamationmark")
-                    } description: {
-                        Text(error)
-                    } actions: {
-                        Button("Try again") {
-                            Task { await viewModel.fetchPokemons() }
-                        }
-                    }
                 } else {
                     List {
-                        ForEach(viewModel.pokemons) { pokemon in
+                        ForEach(store.allPokemon) { pokemon in
                             NavigationLink(value: pokemon) {
                                 PokemonCellView(pokemon: pokemon)
                             }
@@ -41,7 +31,7 @@ struct PokemonListView: View {
                 PokemonDetailView(pokemon: selectedPokemon)
             }
             .task {
-                await viewModel.fetchPokemons()
+                await store.fetchAllPokemon()
             }
         }
     }
