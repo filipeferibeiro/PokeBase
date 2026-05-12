@@ -16,7 +16,14 @@ struct PokemonCellView: View {
                 .frame(width: 60, height: 60)
                 .background(.tertiary)
                 .clipShape(Circle())
-            Text(pokemon.name.capitalized)
+            
+            VStack(alignment: .leading) {
+                Text("#\(pokemon.id)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                Text(pokemon.name.capitalized)
+            }
         }
     }
 }
