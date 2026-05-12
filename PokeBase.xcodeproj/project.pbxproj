@@ -15,7 +15,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Utils/.gitkeep,
-				ViewModels/.gitkeep,
 				Views/.gitkeep,
 			);
 			target = 820C374D2FB27EC000378538 /* PokeBase */;
