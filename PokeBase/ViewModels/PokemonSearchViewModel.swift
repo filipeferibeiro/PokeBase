@@ -13,8 +13,6 @@ class PokemonSearchViewModel {
     var searchResults: [Pokemon] = []
     var searchText: String = ""
     
-    private var searchTask: Task<Void, Never>? = nil
-    
     func searchPokemon(from masterList: [Pokemon]) {
         let query = searchText.lowercased().trimmingCharacters(in: .whitespaces)
         
