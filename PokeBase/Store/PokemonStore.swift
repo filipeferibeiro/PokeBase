@@ -10,11 +10,11 @@ import Observation
 
 @Observable
 class PokemonStore {
-    var allPokemon: [Pokemon] = []
+    var allPokemons: [Pokemon] = []
     var isLoading: Bool = false
     
     func fetchAllPokemon() async {
-        guard allPokemon.isEmpty else { return }
+        guard allPokemons.isEmpty else { return }
         
         isLoading = true
         let urlString = "https://pokeapi.co/api/v2/pokemon?limit=10000"
@@ -23,7 +23,7 @@ class PokemonStore {
             let response: PokemonResponse = try await NetworkManager.shared.fetch(from: urlString)
             
             await MainActor.run {
-                self.allPokemon = response.results.compactMap { $0.asPokemon }
+                self.allPokemons = response.results.compactMap { $0.asPokemon }
                 self.isLoading = false
             }
         } catch {

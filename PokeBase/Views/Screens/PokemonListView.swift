@@ -18,7 +18,7 @@ struct PokemonListView: View {
                         .controlSize(.large)
                 } else {
                     List {
-                        ForEach(store.allPokemon) { pokemon in
+                        ForEach(store.allPokemons) { pokemon in
                             NavigationLink(value: pokemon) {
                                 PokemonCellView(pokemon: pokemon)
                             }
@@ -39,4 +39,5 @@ struct PokemonListView: View {
 
 #Preview {
     PokemonListView()
+        .withPreviewEnvironment()
 }

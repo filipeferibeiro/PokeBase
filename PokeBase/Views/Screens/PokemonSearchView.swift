@@ -40,7 +40,7 @@ struct PokemonSearchView: View {
             .animation(.default, value: viewModel.searchResults)
             .animation(.default, value: viewModel.searchText.isEmpty)
             .onChange(of: viewModel.searchText) {
-                viewModel.searchPokemon(from: store.allPokemon)
+                viewModel.searchPokemon(from: store.allPokemons)
             }
         }
         .searchable(text: $viewModel.searchText, prompt: "Search for a Pokémon")
@@ -49,4 +49,5 @@ struct PokemonSearchView: View {
 
 #Preview {
     PokemonSearchView()
+        .withPreviewEnvironment()
 }
