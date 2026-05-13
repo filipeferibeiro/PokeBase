@@ -8,36 +8,71 @@
 import SwiftUI
 
 struct PokemonDetailView: View {
+    @State private var viewModel = PokemonDetailViewModel()
     let pokemon: Pokemon
     
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            AsyncImage(url: pokemon.imageURL) { phase in
-                switch phase {
-                case .empty:
+        Group {
+            if viewModel.isLoading {
+                VStack {
                     ProgressView()
-                        .frame(width: 224, height: 224)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 224, height: 224)
-                case .failure:
-                    Image(systemName: "photo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 224, height: 224)
-                        .foregroundStyle(.secondary)
-                @unknown default:
-                    EmptyView()
+                        .controlSize(.large)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            } else if viewModel.errorMessage != nil {
+                ContentUnavailableView(
+                    "Error",
+                    systemImage: "xmark.octagon",
+                    description: Text(viewModel.errorMessage ?? "Something went wrong.")
+                )
+            } else {
+                List {
+                    Section {
+                        VStack(alignment: .center, spacing: 16) {
+                            AvatarImageView(url: pokemon.imageURL, size: 224)
+                            
+                            if let detail = viewModel.detail {
+                                HStack(spacing: 16) {
+                                    ForEach(detail.types, id: \.slot) { type in
+                                        PokemonTypeBadgeView(typeName: type.type.name)
+                                    }
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    
+                    if let detail = viewModel.detail {
+                        Section("Metrics") {
+                            PokemonDetailMetricsCellView(name: "Height", value: "\(Double(detail.height) / 10)m", icon: "arrow.up.and.down")
+                            PokemonDetailMetricsCellView(name: "Weight", value: "\(Double(detail.weight) / 10)kg", icon: "scalemass")
+                        }
+                        
+                        Section("Moves") {
+                            ForEach(detail.moves, id: \.move.name) { move in
+                                Text(normalizeMoveName(for: move.move.name))
+                            }
+                        }
+                    }
                 }
             }
-            .background(.tertiary)
-            .clipShape(Circle())
-            
-            Text(pokemon.name.capitalized)
-                .font(.title.bold())
         }
+        .navigationTitle(pokemon.name.capitalized)
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await viewModel.fetchDetail(from: pokemon)
+        }
+    }
+    
+    func normalizeMoveName(for move: String) -> String {
+        let moveName = move
+            .split(separator: "-")
+            .map { $0.capitalized }
+            .joined(separator: " ")
+        
+        return moveName
     }
 }
 
@@ -46,3 +81,4 @@ struct PokemonDetailView: View {
     
     PokemonDetailView(pokemon: pokemon)
 }
+
