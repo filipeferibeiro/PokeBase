@@ -19,7 +19,7 @@ struct PokemonResult: Codable {
     
     var asPokemon: Pokemon? {
         if let idString = url.split(separator: "/").last, let id = Int(idString) {
-            let spriteURLString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(id).png"
+            let spriteURLString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/\(id).png"
             
             guard let imageURL = URL(string: spriteURLString) else { return nil }
             

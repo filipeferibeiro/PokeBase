@@ -12,10 +12,28 @@ struct PokemonCellView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            AsyncImage(url: pokemon.imageURL)
-                .frame(width: 60, height: 60)
-                .background(.tertiary)
-                .clipShape(Circle())
+            AsyncImage(url: pokemon.imageURL) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                        .frame(width: 60, height: 60)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60, height: 60)
+                case .failure:
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 224, height: 224)
+                        .foregroundStyle(.secondary)
+                @unknown default:
+                    EmptyView()
+                }
+            }
+            .background(.tertiary)
+            .clipShape(Circle())
             
             VStack(alignment: .leading) {
                 Text("#\(pokemon.id)")
