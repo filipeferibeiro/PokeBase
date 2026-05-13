@@ -22,7 +22,7 @@ class PokemonSearchViewModel {
         }
         
         self.searchResults = masterList.filter {
-            $0.name.lowercased().contains(query)
+            $0.name.lowercased().contains(query) || $0.id.description.contains(query)
         }
     }
 }
