@@ -19,11 +19,11 @@ struct PokemonDetailView: View {
                         .controlSize(.large)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-            } else if viewModel.errorMessage != nil {
+            } else if let errorMessage = viewModel.errorMessage {
                 ContentUnavailableView(
                     "Error",
                     systemImage: "xmark.octagon",
-                    description: Text(viewModel.errorMessage ?? "Something went wrong.")
+                    description: Text(errorMessage)
                 )
             } else {
                 List {
@@ -52,7 +52,7 @@ struct PokemonDetailView: View {
                         
                         Section("Moves") {
                             ForEach(detail.moves, id: \.move.name) { move in
-                                Text(normalizeMoveName(for: move.move.name))
+                                Text(move.move.displayName)
                             }
                         }
                     }
@@ -64,15 +64,6 @@ struct PokemonDetailView: View {
         .task {
             await viewModel.fetchDetail(from: pokemon)
         }
-    }
-    
-    func normalizeMoveName(for move: String) -> String {
-        let moveName = move
-            .split(separator: "-")
-            .map { $0.capitalized }
-            .joined(separator: " ")
-        
-        return moveName
     }
 }
 

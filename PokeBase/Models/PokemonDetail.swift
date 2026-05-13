@@ -30,5 +30,12 @@ struct PokemonMove: Codable {
     
     struct PokemonMoveInfo: Codable {
         let name: String
+        
+        var displayName: String {
+            return name
+                .split(separator: "-")
+                .map { $0.capitalized }
+                .joined(separator: " ")
+        }
     }
 }
