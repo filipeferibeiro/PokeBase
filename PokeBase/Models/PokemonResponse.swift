@@ -23,7 +23,12 @@ struct PokemonResult: Codable {
             
             guard let imageURL = URL(string: spriteURLString) else { return nil }
             
-            return Pokemon(id: id, name: name, imageURL: imageURL)
+            return Pokemon(
+                id: id,
+                name: name,
+                imageURL: imageURL,
+                stats: .init(height: 0, weight: 0, types: [], moves: [])
+            )
         }
         return nil
     }

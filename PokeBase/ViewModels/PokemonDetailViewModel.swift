@@ -10,48 +10,40 @@ import Observation
 
 @Observable
 class PokemonDetailViewModel {
-    var detail: PokemonDetail?
-    var isLoading: Bool = false
-    var errorMessage: String?
+    enum ViewState {
+        case loading
+        case success(Pokemon, isFavorite: Bool)
+        case error(String)
+    }
     
-    func fetchDetail(from pokemon: Pokemon) async {
-        guard isLoading == false, detail == nil else { return }
-        
-        isLoading = true
-        errorMessage = nil
-        
-        let urlString = "https://pokeapi.co/api/v2/pokemon/\(pokemon.id)"
+    var state: ViewState = .loading
+    private let repository: PokemonRepositoryProtocol
+    private let favoritesService: FavoritesService
+    
+    init(
+        repository: PokemonRepositoryProtocol = PokemonRepository(),
+        favoritesService: FavoritesService
+    ) {
+        self.repository = repository
+        self.favoritesService = favoritesService
+    }
+    
+    func loadDetail(for pokemon: Pokemon) async {
+        state = .loading
         
         do {
-            let response: PokemonDetail = try await NetworkManager.shared.fetch(from: urlString)
-            
-            await MainActor.run {
-                self.detail = response
-                self.isLoading = false
-            }
+            let detailed = try await repository.getPokemonDetail(id: pokemon.id)
+            let isFav = favoritesService.isFavorite(id: pokemon.id)
+            state = .success(detailed, isFavorite: isFav)
         } catch {
-            await MainActor.run {
-                self.isLoading = false
-                self.errorMessage = "Error on load pokemon detail"
-                print("Error on load pokemon detail: \(error)")
-            }
+            state = .error("Something did wrong on load pokémon detail")
         }
     }
     
-    func generateFavoriteData() -> FavoritePokemon? {
-        guard let detail else { return nil }
-        
-        let types = detail.types.map { $0.type.name }
-        let moves = detail.moves.map { $0.move.displayName }
-        
-        return FavoritePokemon(
-            id: detail.id,
-            name: detail.name,
-            imageURL: detail.imageURL,
-            typesRawValues: types,
-            height: detail.height,
-            weight: detail.weight,
-            moves: moves
-        )
+    func toggleFavorite(for pokemon: Pokemon) {
+        favoritesService.toggleFavorite(for: pokemon)
+        if case .success(let p, _) = state {
+            state = .success(p, isFavorite: favoritesService.isFavorite(id: p.id))
+        }
     }
 }

@@ -9,12 +9,20 @@ import SwiftData
 import SwiftUI
 
 struct FavoritePokemonListView: View {
-    @Query private var favoritePokemons: [FavoritePokemon]
+    @Environment(FavoritesService.self) private var favoritesService
     
     var body: some View {
-        List {
-            ForEach(favoritePokemons) { pokemon in
-                Text(pokemon.name)
+        NavigationStack {
+            List {
+                ForEach(favoritesService.favorites) { pokemon in
+                    NavigationLink(value: pokemon.asDomain) {
+                        PokemonCellView(pokemon: pokemon.asDomain)
+                    }
+                }
+            }
+            .navigationTitle("Favorites")
+            .navigationDestination(for: Pokemon.self) { pokemon in
+                PokemonDetailView(pokemon: pokemon, favoritesService: favoritesService)
             }
         }
     }
@@ -22,4 +30,5 @@ struct FavoritePokemonListView: View {
 
 #Preview {
     FavoritePokemonListView()
+        .withPreviewEnvironment()
 }

@@ -9,85 +9,81 @@ import SwiftData
 import SwiftUI
 
 struct PokemonDetailView: View {
-    @Environment(\.modelContext) private var modelContext
-    
-    @State private var viewModel = PokemonDetailViewModel()
+    @Environment(FavoritesService.self) private var favoritesService
+    @State private var viewModel: PokemonDetailViewModel
     let pokemon: Pokemon
+    
+    init(pokemon: Pokemon, favoritesService: FavoritesService) {
+        self.pokemon = pokemon
+        self._viewModel = State(initialValue: PokemonDetailViewModel(favoritesService: favoritesService))
+    }
     
     var body: some View {
         Group {
-            if viewModel.isLoading {
-                VStack {
-                    ProgressView()
-                        .controlSize(.large)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-            } else if let errorMessage = viewModel.errorMessage {
+            switch viewModel.state {
+            case .loading:
+                ProgressView()
+                    .controlSize(.large)
+            case .error(let message):
                 ContentUnavailableView(
                     "Error",
                     systemImage: "xmark.octagon",
-                    description: Text(errorMessage)
+                    description: Text(message)
                 )
-            } else {
-                List {
-                    Section {
-                        VStack(alignment: .center, spacing: 16) {
-                            AvatarImageView(url: pokemon.imageURL, size: 224)
-                            
-                            if let detail = viewModel.detail {
-                                HStack(spacing: 16) {
-                                    ForEach(detail.types, id: \.slot) { type in
-                                        PokemonTypeBadgeView(typeName: type.type.name)
-                                    }
-                                }
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-                    
-                    if let detail = viewModel.detail {
-                        Section("Metrics") {
-                            PokemonDetailMetricsCellView(name: "Height", value: "\(Double(detail.height) / 10)m", icon: "arrow.up.and.down")
-                            PokemonDetailMetricsCellView(name: "Weight", value: "\(Double(detail.weight) / 10)kg", icon: "scalemass")
-                        }
-                        
-                        Section("Moves") {
-                            ForEach(detail.moves, id: \.move.name) { move in
-                                Text(move.move.displayName)
-                            }
-                        }
-                    }
-                }
+            case .success(let detailedPokemon, _):
+                renderDetail(detailedPokemon)
             }
         }
-        .navigationTitle(pokemon.name.capitalized)
+        .navigationTitle(pokemon.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Favorite", systemImage: "heart", action: saveFavorite)
+                Button {
+                    favoritesService.toggleFavorite(for: pokemon)
+                } label: {
+                    Image(systemName: favoritesService.isFavorite(id: pokemon.id) ? "heart.fill" : "heart")
+                }
             }
         }
         .task {
-            await viewModel.fetchDetail(from: pokemon)
+            await viewModel.loadDetail(for: pokemon)
         }
     }
     
-    func saveFavorite() {
-        guard let pokemonSaveData = viewModel.generateFavoriteData() else {
-            return
+    func renderDetail(_ detailedPokemon: Pokemon) -> some View {
+        List {
+            Section {
+                VStack(alignment: .center, spacing: 16) {
+                    AvatarImageView(url: pokemon.imageURL, size: 224)
+                    
+                    HStack(spacing: 16) {
+                        ForEach(detailedPokemon.stats?.types ?? [], id: \.self) { typeStyle in
+                            PokemonTypeBadgeView(typeName: typeStyle.rawValue)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+            
+            Section("Metrics") {
+                PokemonDetailMetricsCellView(name: "Height", value: detailedPokemon.formattedHeight, icon: "arrow.up.and.down")
+                PokemonDetailMetricsCellView(name: "Weight", value: detailedPokemon.formattedWeight, icon: "scalemass")
+            }
+            
+            Section("Moves") {
+                ForEach(detailedPokemon.stats?.moves ?? [], id: \.self) { moveName in
+                    Text(moveName)
+                }
+            }
         }
-        
-        modelContext.insert(pokemonSaveData)
     }
 }
 
 #Preview {
-    let pokemon = Pokemon.exampleData[0]
-    
     NavigationStack {
-        PokemonDetailView(pokemon: pokemon)
+        PokemonDetailView(pokemon: Pokemon.mockDetails, favoritesService: .preview)
     }
 }
 

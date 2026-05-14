@@ -6,14 +6,22 @@
 //
 
 import Foundation
+import SwiftData
 import SwiftUI
 
 extension View {
     func withPreviewEnvironment() -> some View {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try! ModelContainer(for: FavoritePokemon.self, configurations: config)
+        
         let previewStore = PokemonStore()
+        previewStore.allPokemons = Pokemon.mockList
         
-        previewStore.allPokemons = Pokemon.exampleData
+        let favoritesService = FavoritesService(modelContext: container.mainContext)
         
-        return self.environment(previewStore)
+        return self
+            .environment(previewStore)
+            .environment(favoritesService)
+            .modelContainer(container)
     }
 }

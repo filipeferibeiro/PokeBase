@@ -10,13 +10,24 @@ import SwiftUI
 
 @main
 struct PokeBaseApp: App {
+    let container: ModelContainer
     @State private var store = PokemonStore()
+    
+    init() {
+        do {
+            container = try ModelContainer(for: FavoritePokemon.self)
+        } catch {
+            fatalError("Não foi possível inicializar o SwiftData")
+        }
+    }
     
     var body: some Scene {
         WindowGroup {
+            let favoritesService = FavoritesService(modelContext: container.mainContext)
             ContentView()
+                .environment(favoritesService)
                 .environment(store)
-                .modelContainer(for: FavoritePokemon.self)
+                .modelContainer(container)
         }
     }
 }

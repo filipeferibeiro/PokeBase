@@ -25,8 +25,6 @@ struct PokemonCellView: View {
     }
 }
 
-#Preview {
-    let pokemon = Pokemon.exampleData[0]
-    
-    PokemonCellView(pokemon: pokemon)
+#Preview {    
+    PokemonCellView(pokemon: Pokemon.mockDetails)
 }
