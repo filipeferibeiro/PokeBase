@@ -5,6 +5,7 @@
 //  Created by Filipe Fernandes on 11/05/26.
 //
 
+import SwiftData
 import SwiftUI
 
 @main
@@ -15,6 +16,7 @@ struct PokeBaseApp: App {
         WindowGroup {
             ContentView()
                 .environment(store)
+                .modelContainer(for: FavoritePokemon.self)
         }
     }
 }
