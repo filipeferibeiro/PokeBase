@@ -15,7 +15,7 @@ struct ContentView: View {
             }
             
             Tab("Favorites", systemImage: "heart") {
-                Text("Favorites")
+                FavoritePokemonListView()
             }
             
             Tab("Search", systemImage: "magnifyingglass", role: .search) {

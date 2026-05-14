@@ -5,9 +5,12 @@
 //  Created by Filipe Fernandes on 11/05/26.
 //
 
+import SwiftData
 import SwiftUI
 
 struct PokemonDetailView: View {
+    @Environment(\.modelContext) private var modelContext
+    
     @State private var viewModel = PokemonDetailViewModel()
     let pokemon: Pokemon
     
@@ -61,15 +64,30 @@ struct PokemonDetailView: View {
         }
         .navigationTitle(pokemon.name.capitalized)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Favorite", systemImage: "heart", action: saveFavorite)
+            }
+        }
         .task {
             await viewModel.fetchDetail(from: pokemon)
         }
+    }
+    
+    func saveFavorite() {
+        guard let pokemonSaveData = viewModel.generateFavoriteData() else {
+            return
+        }
+        
+        modelContext.insert(pokemonSaveData)
     }
 }
 
 #Preview {
     let pokemon = Pokemon.exampleData[0]
     
-    PokemonDetailView(pokemon: pokemon)
+    NavigationStack {
+        PokemonDetailView(pokemon: pokemon)
+    }
 }
 

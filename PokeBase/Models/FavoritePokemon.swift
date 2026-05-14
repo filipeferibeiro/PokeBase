@@ -9,23 +9,24 @@ import Foundation
 import SwiftData
 
 @Model
-class FavoritePokemon {
+class FavoritePokemon: Identifiable {
     var id: Int
     var name: String
     var imageURL: URL
-    
-    var types: [PokemonTypeStyle]
-    
+    var typesRawValues: [String]
     var height: Int
     var weight: Int
-    
     var moves: [String]
     
-    init(id: Int, name: String, imageURL: URL, types: [PokemonTypeStyle], height: Int, weight: Int, moves: [String]) {
+    var types: [PokemonTypeStyle] {
+        return typesRawValues.compactMap { PokemonTypeStyle(rawValue: $0) }
+    }
+    
+    init(id: Int, name: String, imageURL: URL, typesRawValues: [String], height: Int, weight: Int, moves: [String]) {
         self.id = id
         self.name = name
         self.imageURL = imageURL
-        self.types = types
+        self.typesRawValues = typesRawValues
         self.height = height
         self.weight = weight
         self.moves = moves

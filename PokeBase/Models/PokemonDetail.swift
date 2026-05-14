@@ -14,6 +14,10 @@ struct PokemonDetail: Codable {
     let weight: Int
     let types: [PokemonType]
     let moves: [PokemonMove]
+    
+    var imageURL: URL {
+        return URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/\(id).png")!
+    }
 }
 
 struct PokemonType: Codable {

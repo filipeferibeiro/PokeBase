@@ -37,4 +37,21 @@ class PokemonDetailViewModel {
             }
         }
     }
+    
+    func generateFavoriteData() -> FavoritePokemon? {
+        guard let detail else { return nil }
+        
+        let types = detail.types.map { $0.type.name }
+        let moves = detail.moves.map { $0.move.displayName }
+        
+        return FavoritePokemon(
+            id: detail.id,
+            name: detail.name,
+            imageURL: detail.imageURL,
+            typesRawValues: types,
+            height: detail.height,
+            weight: detail.weight,
+            moves: moves
+        )
+    }
 }
