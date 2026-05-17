@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PokemonCellView: View {
+    @Environment(FavoritesService.self) private var favoritesService
     let pokemon: Pokemon
     
     var body: some View {
@@ -21,10 +22,18 @@ struct PokemonCellView: View {
                 
                 Text(pokemon.name.capitalized)
             }
+            
+            Spacer()
+            
+            if favoritesService.isFavorite(id: pokemon.id) {
+                Image(systemName: "heart.fill")
+                    .foregroundStyle(.red)
+            }
         }
     }
 }
 
 #Preview {    
     PokemonCellView(pokemon: Pokemon.mockDetails)
+        .withPreviewEnvironment()
 }

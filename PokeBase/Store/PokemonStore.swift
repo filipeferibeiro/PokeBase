@@ -17,13 +17,13 @@ class PokemonStore {
         guard allPokemons.isEmpty else { return }
         
         isLoading = true
-        let urlString = "https://pokeapi.co/api/v2/pokemon?limit=10000"
+        let urlString = Constants.pokemonListURL
         
         do {
             let response: PokemonResponse = try await NetworkManager.shared.fetch(from: urlString)
             
             await MainActor.run {
-                self.allPokemons = response.results.compactMap { $0.asPokemon }
+                self.allPokemons = response.results.compactMap { $0.asDomain }
                 self.isLoading = false
             }
         } catch {

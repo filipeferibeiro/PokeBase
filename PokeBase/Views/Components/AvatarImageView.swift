@@ -38,5 +38,5 @@ struct AvatarImageView: View {
 }
 
 #Preview {
-    AvatarImageView(url: URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1.png")!, size: 120)
+    AvatarImageView(url: URL(string: Constants.pokemonImageURL(for: 1))!, size: 120)
 }

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct PokemonListView: View {
     @Environment(PokemonStore.self) private var store
-    @Environment(FavoritesService.self) private var favoritesService
     
     var body: some View {
         NavigationStack {
@@ -29,7 +28,7 @@ struct PokemonListView: View {
             }
             .navigationTitle("Pokémons")
             .navigationDestination(for: Pokemon.self) { selectedPokemon in
-                PokemonDetailView(pokemon: selectedPokemon, favoritesService: favoritesService)
+                PokemonDetailView(pokemon: selectedPokemon)
             }
             .task {
                 await store.fetchAllPokemon()

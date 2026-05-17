@@ -10,13 +10,8 @@ import SwiftUI
 
 struct PokemonDetailView: View {
     @Environment(FavoritesService.self) private var favoritesService
-    @State private var viewModel: PokemonDetailViewModel
+    @State private var viewModel = PokemonDetailViewModel()
     let pokemon: Pokemon
-    
-    init(pokemon: Pokemon, favoritesService: FavoritesService) {
-        self.pokemon = pokemon
-        self._viewModel = State(initialValue: PokemonDetailViewModel(favoritesService: favoritesService))
-    }
     
     var body: some View {
         Group {
@@ -30,21 +25,21 @@ struct PokemonDetailView: View {
                     systemImage: "xmark.octagon",
                     description: Text(message)
                 )
-            case .success(let detailedPokemon, _):
+            case .success(let detailedPokemon):
                 renderDetail(detailedPokemon)
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                favoritesService.toggleFavorite(for: detailedPokemon)
+                            } label: {
+                                Image(systemName: favoritesService.isFavorite(id: pokemon.id) ? "heart.fill" : "heart")
+                            }
+                        }
+                    }
             }
         }
         .navigationTitle(pokemon.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    favoritesService.toggleFavorite(for: pokemon)
-                } label: {
-                    Image(systemName: favoritesService.isFavorite(id: pokemon.id) ? "heart.fill" : "heart")
-                }
-            }
-        }
         .task {
             await viewModel.loadDetail(for: pokemon)
         }
@@ -67,14 +62,16 @@ struct PokemonDetailView: View {
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
             
-            Section("Metrics") {
-                PokemonDetailMetricsCellView(name: "Height", value: detailedPokemon.formattedHeight, icon: "arrow.up.and.down")
-                PokemonDetailMetricsCellView(name: "Weight", value: detailedPokemon.formattedWeight, icon: "scalemass")
-            }
-            
-            Section("Moves") {
-                ForEach(detailedPokemon.stats?.moves ?? [], id: \.self) { moveName in
-                    Text(moveName)
+            if let stats = detailedPokemon.stats {
+                Section("Metrics") {
+                    PokemonMetricsView(
+                        height: detailedPokemon.formattedHeight,
+                        weight: detailedPokemon.formattedWeight
+                    )
+                }
+                
+                Section("Moves") {
+                    PokemonMovesView(moves: stats.moves)
                 }
             }
         }
@@ -83,7 +80,8 @@ struct PokemonDetailView: View {
 
 #Preview {
     NavigationStack {
-        PokemonDetailView(pokemon: Pokemon.mockDetails, favoritesService: .preview)
+        PokemonDetailView(pokemon: Pokemon.mockDetails)
+            .withPreviewEnvironment()
     }
 }
 

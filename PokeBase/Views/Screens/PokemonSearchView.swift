@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct PokemonSearchView: View {
-    @Environment(FavoritesService.self) private var favoritesService
     @Environment(PokemonStore.self) private var store
     @State private var viewModel = PokemonSearchViewModel()
     
@@ -36,7 +35,7 @@ struct PokemonSearchView: View {
             }
             .navigationTitle("Search Pokémons")
             .navigationDestination(for: Pokemon.self) { pokemon in
-                PokemonDetailView(pokemon: pokemon, favoritesService: favoritesService)
+                PokemonDetailView(pokemon: pokemon)
             }
             .animation(.default, value: viewModel.searchResults)
             .animation(.default, value: viewModel.searchText.isEmpty)

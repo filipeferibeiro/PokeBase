@@ -22,7 +22,7 @@ struct FavoritePokemonListView: View {
             }
             .navigationTitle("Favorites")
             .navigationDestination(for: Pokemon.self) { pokemon in
-                PokemonDetailView(pokemon: pokemon, favoritesService: favoritesService)
+                PokemonDetailView(pokemon: pokemon)
             }
         }
     }

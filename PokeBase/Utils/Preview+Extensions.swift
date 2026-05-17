@@ -10,9 +10,15 @@ import SwiftData
 import SwiftUI
 
 extension View {
+    @MainActor
     func withPreviewEnvironment() -> some View {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: FavoritePokemon.self, configurations: config)
+        
+        if let bulbasaur = Pokemon.mockList.first,
+           let favoriteEntity = FavoritePokemon.create(from: bulbasaur) {
+            container.mainContext.insert(favoriteEntity)
+        }
         
         let previewStore = PokemonStore()
         previewStore.allPokemons = Pokemon.mockList

@@ -34,33 +34,3 @@ final class FavoritePokemon: Identifiable {
     }
     
 }
-
-extension FavoritePokemon {
-    var asDomain: Pokemon {
-        Pokemon(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            stats: .init(
-                height: height,
-                weight: weight,
-                types: typesRawValues.compactMap { PokemonTypeStyle(rawValue: $0) },
-                moves: moves
-            )
-        )
-    }
-
-    static func create(from pokemon: Pokemon) -> FavoritePokemon? {
-        guard let stats = pokemon.stats else { return nil }
-        
-        return FavoritePokemon(
-            id: pokemon.id,
-            name: pokemon.name,
-            imageURL: pokemon.imageURL,
-            typesRawValues: stats.types.map { $0.rawValue },
-            height: stats.height,
-            weight: stats.weight,
-            moves: stats.moves
-        )
-    }
-}

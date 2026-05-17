@@ -37,7 +37,7 @@ extension Pokemon {
     static let mockDetails = Pokemon(
         id: 1,
         name: "bulbasaur",
-        imageURL: URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1.png")!,
+        imageURL: URL(string: Constants.pokemonImageURL(for: 1))!,
         stats: Stats(
             height: 7,
             weight: 69,
@@ -51,7 +51,7 @@ extension Pokemon {
         Pokemon(
             id: 4,
             name: "charmander",
-            imageURL: URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/4.png")!,
+            imageURL: URL(string: Constants.pokemonImageURL(for: 4))!,
             stats: Stats(
                 height: 6,
                 weight: 85,
@@ -62,7 +62,7 @@ extension Pokemon {
         Pokemon(
             id: 7,
             name: "squirtle",
-            imageURL: URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/7.png")!,
+            imageURL: URL(string: Constants.pokemonImageURL(for: 7))!,
             stats: Stats(
                 height: 5,
                 weight: 90,
