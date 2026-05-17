@@ -7,15 +7,18 @@
 
 import Foundation
 import SwiftData
+import SwiftUI
 
 @Observable
 class FavoritesService {
     private var modelContext: ModelContext
+    private let repository: PokemonRepositoryProtocol
     
     var favorites: [FavoritePokemon] = []
     
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, repository: PokemonRepositoryProtocol) {
         self.modelContext = modelContext
+        self.repository = repository
         fetchFavorites()
     }
     
@@ -23,13 +26,32 @@ class FavoritesService {
         favorites.contains { $0.id == id }
     }
     
-    func toggleFavorite(for pokemon: Pokemon) {
+    func toggleFavorite(for pokemon: Pokemon) async {
         if isFavorite(id: pokemon.id) {
             remove(id: pokemon.id)
             return
         }
         
-        add(pokemon)
+        if pokemon.stats != nil {
+            add(pokemon)
+            return
+        }
+        
+        do {
+            let detailedPokemon = try await repository.getPokemonDetail(id: pokemon.id)
+            add(detailedPokemon)
+        } catch {
+            print("Error on get Pokémon detail for favorite")
+        }
+    }
+    
+    func removeFavorites(at indexSet: IndexSet) {
+        for index in indexSet {
+            let favorite = favorites[index]
+            withAnimation {
+                remove(id: favorite.id)
+            }
+        }
     }
     
     private func fetchFavorites() {
@@ -65,6 +87,6 @@ extension FavoritesService {
     static var preview: FavoritesService {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: FavoritePokemon.self, configurations: config)
-        return FavoritesService(modelContext: container.mainContext)
+        return FavoritesService(modelContext: container.mainContext, repository: PokemonRepository())
     }
 }

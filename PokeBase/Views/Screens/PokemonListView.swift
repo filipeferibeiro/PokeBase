@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PokemonListView: View {
     @Environment(PokemonStore.self) private var store
+    @Environment(FavoritesService.self) private var favoritesService
     
     var body: some View {
         NavigationStack {
@@ -21,6 +22,21 @@ struct PokemonListView: View {
                         ForEach(store.allPokemons) { pokemon in
                             NavigationLink(value: pokemon) {
                                 PokemonCellView(pokemon: pokemon)
+                            }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                let isFavorite = favoritesService.isFavorite(id: pokemon.id)
+                                
+                                Button(role: isFavorite ? .destructive : .none) {
+                                    Task {
+                                        await favoritesService.toggleFavorite(for: pokemon)
+                                    }
+                                } label: {
+                                    Label (
+                                        isFavorite ? "Remove" : "Favorite",
+                                        systemImage: isFavorite ? "heart.slash.fill" : "heart.fill"
+                                    )
+                                }
+                                .tint(isFavorite ? .red : .orange)
                             }
                         }
                     }

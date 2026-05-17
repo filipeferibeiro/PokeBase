@@ -23,7 +23,7 @@ extension View {
         let previewStore = PokemonStore()
         previewStore.allPokemons = Pokemon.mockList
         
-        let favoritesService = FavoritesService(modelContext: container.mainContext)
+        let favoritesService = FavoritesService(modelContext: container.mainContext, repository: PokemonRepository())
         
         return self
             .environment(previewStore)

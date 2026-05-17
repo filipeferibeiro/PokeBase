@@ -18,7 +18,8 @@ struct PokeBaseApp: App {
     init() {
         do {
             self.container = try ModelContainer(for: FavoritePokemon.self)
-            self._favoritesService = State(initialValue: FavoritesService(modelContext: container.mainContext))
+            let pokemonService = FavoritesService(modelContext: container.mainContext, repository: PokemonRepository())
+            self._favoritesService = State(initialValue: pokemonService)
         } catch {
             fatalError("Error on start SwiftData")
         }

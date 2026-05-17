@@ -19,6 +19,7 @@ struct FavoritePokemonListView: View {
                         PokemonCellView(pokemon: pokemon.asDomain)
                     }
                 }
+                .onDelete(perform: favoritesService.removeFavorites)
             }
             .navigationTitle("Favorites")
             .navigationDestination(for: Pokemon.self) { pokemon in

@@ -30,7 +30,9 @@ struct PokemonDetailView: View {
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
                             Button {
-                                favoritesService.toggleFavorite(for: detailedPokemon)
+                                Task {
+                                    await favoritesService.toggleFavorite(for: detailedPokemon)
+                                }
                             } label: {
                                 Image(systemName: favoritesService.isFavorite(id: pokemon.id) ? "heart.fill" : "heart")
                             }
