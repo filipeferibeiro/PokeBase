@@ -26,7 +26,7 @@ struct PokemonListView: View {
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 let isFavorite = favoritesService.isFavorite(id: pokemon.id)
                                 
-                                Button(role: isFavorite ? .destructive : .none) {
+                                Button {
                                     Task {
                                         await favoritesService.toggleFavorite(for: pokemon)
                                     }
