@@ -28,6 +28,11 @@ class PokemonDetailViewModel {
     func loadDetail(for pokemon: Pokemon) async {
         state = .loading
         
+        if pokemon.stats != nil {
+            state = .success(pokemon)
+            return
+        }
+        
         do {
             let detailed = try await repository.getPokemonDetail(id: pokemon.id)
             state = .success(detailed)
