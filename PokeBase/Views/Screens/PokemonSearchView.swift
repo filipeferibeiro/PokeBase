@@ -15,38 +15,26 @@ struct PokemonSearchView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if store.isLoading {
+                switch store.state {
+                case .loading:
                     ProgressView()
                         .controlSize(.large)
-                } else if viewModel.searchText.isEmpty {
-                    ContentUnavailableView(
-                        "Search Pokémons",
-                        systemImage: "magnifyingglass",
-                        description: Text("Start typing a name to see results.")
-                    )
-                } else if viewModel.searchResults.isEmpty {
-                    ContentUnavailableView.search(text: viewModel.searchText)
-                } else {
-                    List(viewModel.searchResults) { pokemon in
-                        NavigationLink(value: pokemon) {
-                            PokemonCellView(pokemon: pokemon)
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            let isFavorite = favoritesService.isFavorite(id: pokemon.id)
-                            
-                            Button {
-                                Task {
-                                    await favoritesService.toggleFavorite(for: pokemon)
-                                }
-                            } label: {
-                                Label (
-                                    isFavorite ? "Remove" : "Favorite",
-                                    systemImage: isFavorite ? "heart.slash.fill" : "heart.fill"
-                                )
+                    
+                case .error(let error):
+                    ContentUnavailableView {
+                        Label("Error", systemImage: "xmark.octagon")
+                    } description: {
+                        Text(error)
+                    } actions: {
+                        Button("Try again") {
+                            Task {
+                                await store.fetchAllPokemon()
                             }
-                            .tint(isFavorite ? .red : .orange)
                         }
                     }
+                    
+                case .success:
+                    renderSuccess()
                 }
             }
             .navigationTitle("Search Pokémons")
@@ -60,6 +48,41 @@ struct PokemonSearchView: View {
             }
         }
         .searchable(text: $viewModel.searchText, prompt: "Search for a Pokémon")
+    }
+    
+    func renderSuccess() -> some View {
+        Group {
+            if viewModel.searchText.isEmpty {
+                ContentUnavailableView(
+                    "Search Pokémons",
+                    systemImage: "magnifyingglass",
+                    description: Text("Start typing a name to see results.")
+                )
+            } else if viewModel.searchResults.isEmpty {
+                ContentUnavailableView.search(text: viewModel.searchText)
+            } else {
+                List(viewModel.searchResults) { pokemon in
+                    NavigationLink(value: pokemon) {
+                        PokemonCellView(pokemon: pokemon)
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        let isFavorite = favoritesService.isFavorite(id: pokemon.id)
+                        
+                        Button {
+                            Task {
+                                await favoritesService.toggleFavorite(for: pokemon)
+                            }
+                        } label: {
+                            Label (
+                                isFavorite ? "Remove" : "Favorite",
+                                systemImage: isFavorite ? "heart.slash.fill" : "heart.fill"
+                            )
+                        }
+                        .tint(isFavorite ? .red : .orange)
+                    }
+                }
+            }
+        }
     }
 }
 

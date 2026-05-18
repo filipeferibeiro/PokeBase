@@ -14,10 +14,25 @@ struct PokemonListView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if store.isLoading {
+                switch store.state {
+                case .loading:
                     ProgressView("Loading Pokémons")
                         .controlSize(.large)
-                } else {
+                    
+                case .error(let error):
+                    ContentUnavailableView {
+                        Label("Error", systemImage: "xmark.octagon")
+                    } description: {
+                        Text(error)
+                    } actions: {
+                        Button("Try again") {
+                            Task {
+                                await store.fetchAllPokemon()
+                            }
+                        }
+                    }
+                    
+                case .success:
                     List {
                         ForEach(store.allPokemons) { pokemon in
                             NavigationLink(value: pokemon) {

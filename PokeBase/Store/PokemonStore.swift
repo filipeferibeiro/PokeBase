@@ -10,13 +10,19 @@ import Observation
 
 @Observable
 class PokemonStore {
+    enum LoadingState {
+        case loading
+        case success
+        case error(String)
+    }
+    
+    var state: LoadingState = .loading
     var allPokemons: [Pokemon] = []
-    var isLoading: Bool = false
     
     func fetchAllPokemon() async {
         guard allPokemons.isEmpty else { return }
         
-        isLoading = true
+        self.state = .loading
         let urlString = Constants.pokemonListURL
         
         do {
@@ -24,11 +30,11 @@ class PokemonStore {
             
             await MainActor.run {
                 self.allPokemons = response.results.compactMap { $0.asDomain }
-                self.isLoading = false
+                self.state = .success
             }
         } catch {
             await MainActor.run {
-                self.isLoading = false
+                self.state = .error("Error on load pokemon")
                 print("Error on load pokemon: \(error)")
             }
         }
