@@ -25,7 +25,10 @@ extension View {
         
         let favoritesService = FavoritesService(modelContext: container.mainContext, repository: PokemonRepository())
         
+        let navigationManager = NavigationManager()
+        
         return self
+            .environment(navigationManager)
             .environment(previewStore)
             .environment(favoritesService)
             .modelContainer(container)

@@ -8,18 +8,28 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(NavigationManager.self) private var navManager
+    
     var body: some View {
-        TabView {
-            Tab("Home", systemImage: "house") {
+        @Bindable var nav = navManager
+        
+        TabView(selection: $nav.selectedTab) {
+            Tab(value: .home) {
                 PokemonListView()
+            } label: {
+                Label("Home", systemImage: "house")
             }
             
-            Tab("Favorites", systemImage: "heart") {
+            Tab(value: .favorites) {
                 FavoritePokemonListView()
+            } label: {
+                Label("Favorites", systemImage: "heart")
             }
             
-            Tab("Search", systemImage: "magnifyingglass", role: .search) {
+            Tab(value: .search, role: .search) {
                 PokemonSearchView()
+            } label: {
+                Label("Search", systemImage: "magnifyingglass")
             }
         }
     }

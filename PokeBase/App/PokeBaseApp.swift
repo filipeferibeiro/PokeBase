@@ -14,12 +14,14 @@ struct PokeBaseApp: App {
     
     @State private var store = PokemonStore()
     @State private var favoritesService: FavoritesService
+    @State private var navigationManager: NavigationManager
     
     init() {
         do {
             self.container = try ModelContainer(for: FavoritePokemon.self)
             let pokemonService = FavoritesService(modelContext: container.mainContext, repository: PokemonRepository())
             self._favoritesService = State(initialValue: pokemonService)
+            self._navigationManager = State(initialValue: NavigationManager())
         } catch {
             fatalError("Error on start SwiftData")
         }
@@ -28,6 +30,7 @@ struct PokeBaseApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(navigationManager)
                 .environment(favoritesService)
                 .environment(store)
                 .modelContainer(container)
