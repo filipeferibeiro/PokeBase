@@ -38,7 +38,7 @@ struct PokemonListView: View {
                             NavigationLink(value: pokemon) {
                                 PokemonCellView(pokemon: pokemon)
                             }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
                                 let isFavorite = favoritesService.isFavorite(id: pokemon.id)
                                 
                                 Button {
@@ -60,6 +60,7 @@ struct PokemonListView: View {
             .navigationTitle("Pokémons")
             .navigationDestination(for: Pokemon.self) { selectedPokemon in
                 PokemonDetailView(pokemon: selectedPokemon)
+                    .id(selectedPokemon.id)
             }
             .task {
                 await store.fetchAllPokemon()

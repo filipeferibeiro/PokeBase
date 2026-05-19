@@ -19,6 +19,14 @@ class PokemonRepository: PokemonRepositoryProtocol {
         let stringURL = "\(Constants.pokemonDetailUrl)/\(id)"
         let dto: PokemonDetail = try await network.fetch(from: stringURL)
         
-        return dto.asDomain
+        var pokemon: Pokemon = dto.asDomain
+        
+        if let url = pokemon.imageURL {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            
+            pokemon = pokemon.updatedWithImageData(imageData: data)
+        }
+        
+        return pokemon
     }
 }

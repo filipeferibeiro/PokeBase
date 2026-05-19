@@ -13,7 +13,7 @@ struct PokemonCellView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            AvatarImageView(url: pokemon.imageURL, size: 60)
+            AvatarImageView(imageData: pokemon.imageData, imageURL: pokemon.imageURL, size: 60)
             
             VStack(alignment: .leading) {
                 Text("#\(pokemon.id)")

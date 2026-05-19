@@ -42,7 +42,7 @@ struct PokemonDetailView: View {
         }
         .navigationTitle(pokemon.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .task {
+        .task(id: pokemon.id) {
             await viewModel.loadDetail(for: pokemon)
         }
     }
@@ -51,7 +51,7 @@ struct PokemonDetailView: View {
         List {
             Section {
                 VStack(alignment: .center, spacing: 16) {
-                    AvatarImageView(url: pokemon.imageURL, size: 224)
+                    AvatarImageView(imageData: detailedPokemon.imageData, imageURL: detailedPokemon.imageURL, size: 224)
                     
                     HStack(spacing: 16) {
                         ForEach(detailedPokemon.stats?.types ?? [], id: \.self) { typeStyle in

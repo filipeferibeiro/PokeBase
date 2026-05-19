@@ -14,38 +14,39 @@ struct PokemonSearchView: View {
     
     var body: some View {
         NavigationStack {
-            Group {
-                switch store.state {
-                case .loading:
-                    ProgressView()
-                        .controlSize(.large)
-                    
-                case .error(let error):
-                    ContentUnavailableView {
-                        Label("Error", systemImage: "xmark.octagon")
-                    } description: {
-                        Text(error)
-                    } actions: {
-                        Button("Try again") {
-                            Task {
-                                await store.fetchAllPokemon()
-                            }
+        Group {
+            switch store.state {
+            case .loading:
+                ProgressView()
+                    .controlSize(.large)
+                
+            case .error(let error):
+                ContentUnavailableView {
+                    Label("Error", systemImage: "xmark.octagon")
+                } description: {
+                    Text(error)
+                } actions: {
+                    Button("Try again") {
+                        Task {
+                            await store.fetchAllPokemon()
                         }
                     }
-                    
-                case .success:
-                    renderSuccess()
                 }
+                
+            case .success:
+                renderSuccess()
             }
-            .navigationTitle("Search Pokémons")
-            .navigationDestination(for: Pokemon.self) { pokemon in
-                PokemonDetailView(pokemon: pokemon)
-            }
-            .animation(.default, value: viewModel.searchResults)
-            .animation(.default, value: viewModel.searchText.isEmpty)
-            .onChange(of: viewModel.searchText) {
-                viewModel.searchPokemon(from: store.allPokemons)
-            }
+        }
+        .navigationTitle("Search Pokémons")
+        .navigationDestination(for: Pokemon.self) { pokemon in
+            PokemonDetailView(pokemon: pokemon)
+                .id(pokemon.id)
+        }
+        .animation(.default, value: viewModel.searchResults)
+        .animation(.default, value: viewModel.searchText.isEmpty)
+        .onChange(of: viewModel.searchText) {
+            viewModel.searchPokemon(from: store.allPokemons)
+        }
         }
         .searchable(text: $viewModel.searchText, prompt: "Search for a Pokémon")
     }
@@ -65,7 +66,7 @@ struct PokemonSearchView: View {
                     NavigationLink(value: pokemon) {
                         PokemonCellView(pokemon: pokemon)
                     }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         let isFavorite = favoritesService.isFavorite(id: pokemon.id)
                         
                         Button {

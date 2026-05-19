@@ -11,12 +11,11 @@ extension PokemonDetail {
     var asDomain: Pokemon {
         let mappedTypes: [PokemonTypeStyle] = types.map { $0.type.name }.compactMap { PokemonTypeStyle(rawValue: $0) }
         let mappedMoves: [String] = moves.map { $0.move.displayName }
-        let imageURL: URL = URL(string: Constants.pokemonImageURL(for: id))!
         
         return Pokemon(
             id: id,
             name: name,
-            imageURL: imageURL,
+            imageData: nil,
             stats: .init(
                 height: Double(height),
                 weight: Double(weight),
@@ -32,7 +31,7 @@ extension FavoritePokemon {
         Pokemon(
             id: id,
             name: name,
-            imageURL: imageURL,
+            imageData: imageData,
             stats: .init(
                 height: height,
                 weight: weight,
@@ -48,7 +47,7 @@ extension FavoritePokemon {
         return FavoritePokemon(
             id: pokemon.id,
             name: pokemon.name,
-            imageURL: pokemon.imageURL,
+            imageData: pokemon.imageData,
             typesRawValues: stats.types.map { $0.rawValue },
             height: stats.height,
             weight: stats.weight,
@@ -60,14 +59,11 @@ extension FavoritePokemon {
 extension PokemonResult {
     var asDomain: Pokemon? {
         if let idString = url.split(separator: "/").last, let id = Int(idString) {
-            let spriteURLString = Constants.pokemonImageURL(for: id)
-            
-            guard let imageURL = URL(string: spriteURLString) else { return nil }
             
             return Pokemon(
                 id: id,
                 name: name,
-                imageURL: imageURL,
+                imageData: nil,
                 stats: nil
             )
         }

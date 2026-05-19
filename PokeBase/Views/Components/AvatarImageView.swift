@@ -8,35 +8,47 @@
 import SwiftUI
 
 struct AvatarImageView: View {
-    let url: URL
+    let imageData: Data?
+    let imageURL: URL?
     let size: CGFloat
     
     var body: some View {
-        AsyncImage(url: url) { phase in
-            switch phase {
-            case .empty:
-                ProgressView()
-                    .frame(width: size, height: size)
-            case .success(let image):
-                image
+        Group {
+            if let data = imageData, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: size, height: size)
-            case .failure:
+            } else if let url = imageURL {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    case .failure:
+                        Image(systemName: "photo")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(.tertiary)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+            } else {
                 Image(systemName: "photo")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: size, height: size)
-                    .foregroundStyle(.secondary)
-            @unknown default:
-                EmptyView()
+                    .foregroundStyle(.tertiary)
             }
         }
-        .background(.tertiary)
+        .frame(width: size, height: size)
+        .background(.quaternary)
         .clipShape(Circle())
     }
 }
 
 #Preview {
-    AvatarImageView(url: URL(string: Constants.pokemonImageURL(for: 1))!, size: 120)
+    AvatarImageView(imageData: nil, imageURL: URL(string: Constants.pokemonImageURL(for: 1)), size: 120)
 }

@@ -12,6 +12,8 @@ struct FavoritePokemonListView: View {
     @Environment(FavoritesService.self) private var favoritesService
     @Environment(NavigationManager.self) private var navManager
     
+    @State private var selection = Set<Int>()
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -29,7 +31,7 @@ struct FavoritePokemonListView: View {
                         .buttonStyle(.glassProminent)
                     }
                 } else {
-                    List {
+                    List(selection: $selection) {
                         ForEach(favoritesService.favorites) { pokemon in
                             NavigationLink(value: pokemon.asDomain) {
                                 PokemonCellView(pokemon: pokemon.asDomain)
@@ -43,6 +45,27 @@ struct FavoritePokemonListView: View {
             .navigationDestination(for: Pokemon.self) { pokemon in
                 PokemonDetailView(pokemon: pokemon)
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    EditButton()
+                }
+                
+                if !selection.isEmpty {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button(role: .destructive, action: {
+                            withAnimation {
+                                favoritesService.deleteSelectedPokemons(selection: selection)
+                                selection.removeAll()
+                            }
+                        }) {
+                            Label("Delete selection", systemImage: "trash")
+                        }
+                        .foregroundStyle(.red)
+                    }
+                }
+            }
+            .toolbar(selection.isEmpty ? .visible : .hidden, for: .tabBar)
+            .animation(.default, value: selection.isEmpty)
         }
     }
 }

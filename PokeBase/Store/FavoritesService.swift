@@ -39,6 +39,7 @@ class FavoritesService {
         
         do {
             let detailedPokemon = try await repository.getPokemonDetail(id: pokemon.id)
+            
             add(detailedPokemon)
         } catch {
             print("Error on get Pokémon detail for favorite")
@@ -54,6 +55,14 @@ class FavoritesService {
         }
     }
     
+    func deleteSelectedPokemons(selection: Set<Int>) {
+        let pokemonsToDelete = favorites.filter { selection.contains($0.id) }
+        
+        for pokemon in pokemonsToDelete {
+            remove(id: pokemon.id)
+        }
+    }
+    
     private func fetchFavorites() {
         let descriptor = FetchDescriptor<FavoritePokemon>(sortBy: [SortDescriptor(\.id)])
         
@@ -66,6 +75,7 @@ class FavoritesService {
     
     private func add(_ pokemon: Pokemon) {
         guard let newFavorite = FavoritePokemon.create(from: pokemon) else { return }
+        
         modelContext.insert(newFavorite)
         save()
     }

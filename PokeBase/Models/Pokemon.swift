@@ -10,7 +10,7 @@ import Foundation
 struct Pokemon: Hashable, Identifiable {
     let id: Int
     let name: String
-    let imageURL: URL
+    let imageData: Data?
     let stats: Stats?
     
     struct Stats: Hashable {
@@ -22,6 +22,10 @@ struct Pokemon: Hashable, Identifiable {
     
     var displayName: String { name.capitalized }
     
+    var imageURL: URL? {
+        return URL(string: Constants.pokemonImageURL(for: id))
+    }
+    
     var formattedHeight: String {
         guard let height = stats?.height else { return "--" }
         return String(format: "%.1fm", Double(height) / 10.0)
@@ -31,13 +35,17 @@ struct Pokemon: Hashable, Identifiable {
         guard let weight = stats?.weight else { return "--" }
         return String(format: "%.1fkg", Double(weight) / 10.0)
     }
+    
+    func updatedWithImageData(imageData: Data?) -> Pokemon {
+        return Pokemon(id: self.id, name: self.name, imageData: imageData, stats: self.stats)
+    }
 }
 
 extension Pokemon {
     static let mockDetails = Pokemon(
         id: 1,
         name: "bulbasaur",
-        imageURL: URL(string: Constants.pokemonImageURL(for: 1))!,
+        imageData: nil,
         stats: Stats(
             height: 7,
             weight: 69,
@@ -51,7 +59,7 @@ extension Pokemon {
         Pokemon(
             id: 4,
             name: "charmander",
-            imageURL: URL(string: Constants.pokemonImageURL(for: 4))!,
+            imageData: nil,
             stats: Stats(
                 height: 6,
                 weight: 85,
@@ -62,7 +70,7 @@ extension Pokemon {
         Pokemon(
             id: 7,
             name: "squirtle",
-            imageURL: URL(string: Constants.pokemonImageURL(for: 7))!,
+            imageData: nil,
             stats: Stats(
                 height: 5,
                 weight: 90,

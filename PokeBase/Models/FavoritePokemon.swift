@@ -13,7 +13,8 @@ final class FavoritePokemon: Identifiable {
     @Attribute(.unique)
     var id: Int
     var name: String
-    var imageURL: URL
+    @Attribute(.externalStorage)
+    var imageData: Data?
     var typesRawValues: [String]
     var height: Double
     var weight: Double
@@ -23,10 +24,10 @@ final class FavoritePokemon: Identifiable {
         return typesRawValues.compactMap { PokemonTypeStyle(rawValue: $0) }
     }
     
-    init(id: Int, name: String, imageURL: URL, typesRawValues: [String], height: Double, weight: Double, moves: [String]) {
+    init(id: Int, name: String, imageData: Data?, typesRawValues: [String], height: Double, weight: Double, moves: [String]) {
         self.id = id
         self.name = name
-        self.imageURL = imageURL
+        self.imageData = imageData
         self.typesRawValues = typesRawValues
         self.height = height
         self.weight = weight
