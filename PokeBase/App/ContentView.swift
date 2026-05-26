@@ -14,22 +14,16 @@ struct ContentView: View {
         @Bindable var nav = navManager
         
         TabView(selection: $nav.selectedTab) {
-            Tab(value: .home) {
+            Tab("Home", systemImage: "house", value: .home) {
                 PokemonListView()
-            } label: {
-                Label("Home", systemImage: "house")
             }
             
-            Tab(value: .favorites) {
+            Tab("Favorites", systemImage: "heart", value: .favorites) {
                 FavoritePokemonListView()
-            } label: {
-                Label("Favorites", systemImage: "heart")
             }
             
-            Tab(value: .search, role: .search) {
+            Tab("Search", systemImage: "magnifyingglass", value: .search, role: .search) {
                 PokemonSearchView()
-            } label: {
-                Label("Search", systemImage: "magnifyingglass")
             }
         }
     }
