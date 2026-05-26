@@ -50,7 +50,7 @@ Aqui estão as principais telas do aplicativo que demonstram a interface e fluxo
 ## 🚀 Como Executar
 
 1. Certifique-se de ter o **Xcode 15.0+** instalado.
-2. Clone este repositório: `git clone https://github.com/seu-usuario/pokebase.git`
+2. Clone este repositório: `git clone https://github.com/filipeferibeiro/PokeBase.git`
 3. Abra o arquivo `PokeBase.xcodeproj`.
 4. Selecione um simulador de iPhone (recomenda-se iPhone 15 ou superior).
 5. Pressione `Cmd + R` para rodar.
