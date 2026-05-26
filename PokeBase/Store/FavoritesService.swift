@@ -55,6 +55,12 @@ class FavoritesService {
         }
     }
     
+    func removeFavoritePokemon(id: Int) {
+        withAnimation {
+            remove(id: id)
+        }
+    }
+    
     func deleteSelectedPokemons(selection: Set<Int>) {
         let pokemonsToDelete = favorites.filter { selection.contains($0.id) }
         

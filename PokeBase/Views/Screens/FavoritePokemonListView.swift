@@ -31,14 +31,18 @@ struct FavoritePokemonListView: View {
                         .buttonStyle(.glassProminent)
                     }
                 } else {
-                    List(selection: $selection) {
-                        ForEach(favoritesService.favorites) { pokemon in
-                            NavigationLink(value: pokemon.asDomain) {
-                                PokemonCellView(pokemon: pokemon.asDomain)
+                    List(favoritesService.favorites, selection: $selection) { pokemon in
+                        NavigationLink(value: pokemon.asDomain) {
+                            PokemonCellView(pokemon: pokemon.asDomain)
+                        }
+                        .swipeActions {
+                            Button("Delete", systemImage: "trash", role: .destructive) {
+                                favoritesService.removeFavoritePokemon(id: pokemon.id)
                             }
                         }
-                        .onDelete(perform: favoritesService.removeFavorites)
+                        .tag(pokemon.id)
                     }
+                    
                 }
             }
             .navigationTitle("Favorites")
@@ -49,22 +53,7 @@ struct FavoritePokemonListView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     EditButton()
                 }
-                
-                if !selection.isEmpty {
-                    ToolbarItem(placement: .bottomBar) {
-                        Button(role: .destructive, action: {
-                            withAnimation {
-                                favoritesService.deleteSelectedPokemons(selection: selection)
-                                selection.removeAll()
-                            }
-                        }) {
-                            Label("Delete selection", systemImage: "trash")
-                        }
-                        .foregroundStyle(.red)
-                    }
-                }
             }
-            .toolbar(selection.isEmpty ? .visible : .hidden, for: .tabBar)
             .animation(.default, value: selection.isEmpty)
         }
     }
