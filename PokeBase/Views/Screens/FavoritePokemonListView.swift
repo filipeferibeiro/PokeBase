@@ -13,6 +13,11 @@ struct FavoritePokemonListView: View {
     @Environment(NavigationManager.self) private var navManager
     
     @State private var selection = Set<Int>()
+    @State private var editingMode = EditMode.inactive
+    
+    var pokemons: [Pokemon] {
+        return favoritesService.favorites.map { $0.asDomain }
+    }
     
     var body: some View {
         NavigationStack {
@@ -31,16 +36,13 @@ struct FavoritePokemonListView: View {
                         .buttonStyle(.glassProminent)
                     }
                 } else {
-                    List(favoritesService.favorites, selection: $selection) { pokemon in
-                        NavigationLink(value: pokemon.asDomain) {
-                            PokemonCellView(pokemon: pokemon.asDomain)
-                        }
-                        .swipeActions {
-                            Button("Delete", systemImage: "trash", role: .destructive) {
-                                favoritesService.removeFavoritePokemon(id: pokemon.id)
+                    List(selection: $selection) {
+                        ForEach(pokemons) { pokemon in
+                            NavigationLink(value: pokemon) {
+                                PokemonCellView(pokemon: pokemon)
                             }
                         }
-                        .tag(pokemon.id)
+                        .onDelete(perform: favoritesService.removeFavorites)
                     }
                     
                 }
@@ -51,10 +53,39 @@ struct FavoritePokemonListView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    EditButton()
+                    if editingMode == .inactive {
+                        Button {
+                            editingMode = .active
+                            selection.removeAll()
+                        } label: {
+                            Text("Edit")
+                        }
+                    } else {
+                        Button {
+                            editingMode = .inactive
+                            selection.removeAll()
+                        } label: {
+                            Text("Done")
+                        }
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    if editingMode == .active {
+                        Button(role: .destructive) {
+                            favoritesService.deleteSelectedPokemons(selection: selection)
+                            selection.removeAll()
+                            editingMode = .inactive
+                        } label: {
+                            Label("Delete Pokémons", systemImage: "trash")
+                        }
+                        .disabled(selection.isEmpty)
+                    }
                 }
             }
             .animation(.default, value: selection.isEmpty)
+            .animation(.default, value: editingMode)
+            .environment(\.editMode, $editingMode)
         }
     }
 }
