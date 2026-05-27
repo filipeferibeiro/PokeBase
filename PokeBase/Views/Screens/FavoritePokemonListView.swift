@@ -53,21 +53,7 @@ struct FavoritePokemonListView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    if editingMode == .inactive {
-                        Button {
-                            editingMode = .active
-                            selection.removeAll()
-                        } label: {
-                            Text("Edit")
-                        }
-                    } else {
-                        Button {
-                            editingMode = .inactive
-                            selection.removeAll()
-                        } label: {
-                            Text("Done")
-                        }
-                    }
+                    editButton
                 }
                 
                 ToolbarItem(placement: .topBarLeading) {
@@ -86,6 +72,26 @@ struct FavoritePokemonListView: View {
             .animation(.default, value: selection.isEmpty)
             .animation(.default, value: editingMode)
             .environment(\.editMode, $editingMode)
+        }
+    }
+    
+    var editButton: some View {
+        Group {
+            if editingMode == .inactive {
+                Button {
+                    editingMode = .active
+                    selection.removeAll()
+                } label: {
+                    Text("Edit")
+                }
+            } else {
+                Button {
+                    editingMode = .inactive
+                    selection.removeAll()
+                } label: {
+                    Text("Done")
+                }
+            }
         }
     }
 }
