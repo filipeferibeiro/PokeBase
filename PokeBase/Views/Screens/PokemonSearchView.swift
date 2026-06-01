@@ -12,6 +12,8 @@ struct PokemonSearchView: View {
     @Environment(FavoritesService.self) private var favoritesService
     @State private var viewModel = PokemonSearchViewModel()
     
+    @Namespace private var animationSpace
+    
     var body: some View {
         NavigationStack {
         Group {
@@ -37,10 +39,12 @@ struct PokemonSearchView: View {
                 renderSuccess()
             }
         }
+        .pokedexBackground()
         .navigationTitle("Search Pokémons")
         .navigationDestination(for: Pokemon.self) { pokemon in
             PokemonDetailView(pokemon: pokemon)
                 .id(pokemon.id)
+                .navigationTransition(.zoom(sourceID: pokemon.id, in: animationSpace))
         }
         .animation(.default, value: viewModel.searchResults)
         .animation(.default, value: viewModel.searchText.isEmpty)
@@ -66,6 +70,8 @@ struct PokemonSearchView: View {
                     NavigationLink(value: pokemon) {
                         PokemonCellView(pokemon: pokemon)
                     }
+                    .listCellProps()
+                    .matchedTransitionSource(id: pokemon.id, in: animationSpace)
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         let isFavorite = favoritesService.isFavorite(id: pokemon.id)
                         
@@ -82,6 +88,9 @@ struct PokemonSearchView: View {
                         .tint(isFavorite ? .red : .orange)
                     }
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
             }
         }
     }

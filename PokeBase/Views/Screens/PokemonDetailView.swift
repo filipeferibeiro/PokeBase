@@ -40,6 +40,7 @@ struct PokemonDetailView: View {
                     }
             }
         }
+        .pokedexBackground()
         .navigationTitle(pokemon.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .task(id: pokemon.id) {
@@ -77,6 +78,8 @@ struct PokemonDetailView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.clear)
     }
 }
 

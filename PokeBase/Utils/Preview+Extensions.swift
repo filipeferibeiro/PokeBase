@@ -20,6 +20,10 @@ extension View {
             container.mainContext.insert(favoriteEntity)
         }
         
+        let charmander = Pokemon.mockList[1]
+        let favoriteEntity = FavoritePokemon.create(from: charmander)!
+        container.mainContext.insert(favoriteEntity)
+        
         let previewStore = PokemonStore()
         previewStore.allPokemons = Pokemon.mockList
         

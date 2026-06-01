@@ -44,8 +44,6 @@ struct AvatarImageView: View {
             }
         }
         .frame(width: size, height: size)
-        .background(.quaternary)
-        .clipShape(Circle())
     }
 }
 

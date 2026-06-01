@@ -11,6 +11,8 @@ struct PokemonListView: View {
     @Environment(PokemonStore.self) private var store
     @Environment(FavoritesService.self) private var favoritesService
     
+    @Namespace private var animationSpace
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -38,6 +40,8 @@ struct PokemonListView: View {
                             NavigationLink(value: pokemon) {
                                 PokemonCellView(pokemon: pokemon)
                             }
+                            .listCellProps()
+                            .matchedTransitionSource(id: pokemon.id, in: animationSpace)
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                                 let isFavorite = favoritesService.isFavorite(id: pokemon.id)
                                 
@@ -55,12 +59,20 @@ struct PokemonListView: View {
                             }
                         }
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.clear)
+                    .refreshable {
+                        await store.fetchAllPokemon()
+                    }
                 }
             }
+            .pokedexBackground()
             .navigationTitle("Pokémons")
             .navigationDestination(for: Pokemon.self) { selectedPokemon in
                 PokemonDetailView(pokemon: selectedPokemon)
                     .id(selectedPokemon.id)
+                    .navigationTransition(.zoom(sourceID: selectedPokemon.id, in: animationSpace))
             }
             .task {
                 await store.fetchAllPokemon()

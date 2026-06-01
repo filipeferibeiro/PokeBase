@@ -12,7 +12,11 @@ struct PokemonMovesView: View {
     
     var body: some View {
         ForEach(moves, id: \.self) { moveName in
-            Text(moveName)
+            HStack(spacing: 8) {
+                Image(systemName: "bolt.fill")
+                    .foregroundStyle(.yellow)
+                Text(moveName)
+            }
         }
     }
 }

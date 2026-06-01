@@ -12,6 +12,8 @@ struct FavoritePokemonListView: View {
     @Environment(FavoritesService.self) private var favoritesService
     @Environment(NavigationManager.self) private var navManager
     
+    @Namespace private var animationSpace
+    
     @State private var selection = Set<Int>()
     @State private var editingMode = EditMode.inactive
     
@@ -41,15 +43,22 @@ struct FavoritePokemonListView: View {
                             NavigationLink(value: pokemon) {
                                 PokemonCellView(pokemon: pokemon)
                             }
+                            .listCellProps()
+                            .matchedTransitionSource(id: pokemon.id, in: animationSpace)
                         }
                         .onDelete(perform: favoritesService.removeFavorites)
                     }
-                    
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .background(.clear)
                 }
             }
+            .pokedexBackground()
             .navigationTitle("Favorites")
             .navigationDestination(for: Pokemon.self) { pokemon in
                 PokemonDetailView(pokemon: pokemon)
+                    .id(pokemon.id)
+                    .navigationTransition(.zoom(sourceID: pokemon.id, in: animationSpace))
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
